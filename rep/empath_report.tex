@@ -93,6 +93,7 @@
 
 % ─── Code Listings ──────────────────────────────────────
 \usepackage{listings}
+\usepackage{float}  % enables float=t option on lstlisting
 \lstdefinestyle{pythonstyle}{
   language=Python,
   backgroundcolor=\color{codebackground},
@@ -506,7 +507,7 @@ Code Snippet~\ref{lst:gsr_slope} shows the implementation of two key features:
 \texttt{gsr\_slope} (linear rate of change of skin conductance) and
 \texttt{gsr\_shannon} (Shannon entropy of the conductance distribution).
 
-\begin{lstlisting}[caption={GSR slope and Shannon entropy extraction from a single trial window. \texttt{gsr\_vals} is a 1-D NumPy array of skin conductance values (microsiemens) over 5.5 seconds.}, label={lst:gsr_slope}]
+\begin{lstlisting}[float=t, caption={GSR slope and Shannon entropy extraction from a single trial window. \texttt{gsr\_vals} is a 1-D NumPy array of skin conductance values (microsiemens) over 5.5 seconds.}, label={lst:gsr_slope}]
 import numpy as np
 from scipy.stats import entropy
 
@@ -723,7 +724,7 @@ statistics are computed independently before pooling the normalized training set
 test folds (single held-out subject), test statistics are computed from the subject's own
 unlabeled feature values. Code Snippet~\ref{lst:norm} shows the implementation.
 
-\begin{lstlisting}[caption={Person-specific $z$-score normalization for train and test folds. \texttt{X} is an (N, D) feature matrix; \texttt{g} is a length-N subject ID array.}, label={lst:norm}]
+\begin{lstlisting}[float=t, caption={Person-specific $z$-score normalization for train and test folds. \texttt{X} is an (N, D) feature matrix; \texttt{g} is a length-N subject ID array.}, label={lst:norm}]
 import numpy as np
 
 def person_norm_train(X, g):
@@ -825,7 +826,7 @@ strict evaluation of subject-independent generalization.}
 
 Code Snippet~\ref{lst:loso} shows the core LOSO evaluation loop.
 
-\begin{lstlisting}[caption={Core LOSO evaluation loop for the stacked fusion model. Arrays \texttt{X\_bio} and \texttt{X\_lm} contain unnormalized features; \texttt{y} contains binary labels; \texttt{groups} contains subject IDs.}, label={lst:loso}]
+\begin{lstlisting}[float=t, caption={Core LOSO evaluation loop for the stacked fusion model. Arrays \texttt{X\_bio} and \texttt{X\_lm} contain unnormalized features; \texttt{y} contains binary labels; \texttt{groups} contains subject IDs.}, label={lst:loso}]
 logo = LeaveOneGroupOut()
 accs = []
 RF_PARAMS = dict(n_estimators=300, max_depth=4,
@@ -874,7 +875,7 @@ script in \texttt{SRC/utils/run\_shap.slurm} (16~GB memory, 8 CPU cores, approxi
 12 minutes wall time).
 Code Snippet~\ref{lst:shap} shows the computation.
 
-\begin{lstlisting}[caption={SHAP TreeExplainer applied to the biosignal Random Forest. The same procedure applies to the landmark RF.}, label={lst:shap}]
+\begin{lstlisting}[float=t, caption={SHAP TreeExplainer applied to the biosignal Random Forest. The same procedure applies to the landmark RF.}, label={lst:shap}]
 import shap
 
 # Re-fit on all data (not for eval -- only interpretability)
