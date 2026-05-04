@@ -356,7 +356,7 @@ Tübingen, Germany. Eighty-seven healthy adult participants (44 women, 43 men; a
 18--65 years; $M_{\text{age}}$ = 41.0, $SD$ = 13.8) received heat pain stimuli of varying
 intensities while synchronized physiological signals and video recordings were captured.
 Biosignals were recorded at 512~Hz and include GSR from the hand, three-lead ECG, two
-trapezoid EMG channels, and one zygomaticus EMG channel. Video was captured at 25~fps.
+trapezius EMG channels, and one zygomaticus EMG channel. Video was captured at 25~fps.
 
 The dataset comprises five stimulus conditions: baseline (BL) and four pain levels
 (PA1--PA4). We restrict analysis to PA2 versus PA3, the most challenging adjacent
@@ -519,10 +519,12 @@ def extract_gsr_features(gsr_vals: np.ndarray) -> dict:
 HRV features (RMSSD, SDNN, pNN50, mean RR interval) were computed from the ECG signal
 using NeuroKit2 (\cite{Makowski2021}), which performs R-peak detection via the
 Pan-Tompkins algorithm before extracting standard time-domain HRV metrics. EMG features
-include mean activation, standard deviation, and an asymmetry index computed as the signed
-difference between trapezoid and corrugator channels. Cross-modal interaction features
-(GSR $\times$ ECG correlation, GSR $\times$ ECG mutual information) were included to capture
-autonomic co-activation patterns not encoded in univariate statistics.
+include mean activation, standard deviation, and an asymmetry index computed as the
+normalized absolute difference between trapezius and corrugator mean activation. Similarity features
+(\texttt{gsr\_sim\_corr}, \texttt{gsr\_sim\_mi}) measure Pearson correlation and mutual
+information between each trial's GSR signal and the subject's own resting-state BL1
+recording. A cross-modal interaction feature (\texttt{gsr\_x\_ecg}) captures
+element-wise co-activation between GSR and ECG channels.
 
 \begin{table*}[t]
 \centering
@@ -937,7 +939,7 @@ fusion by 0.7 percentage points.
 \subsubsection{Confusion Matrix}
 
 Figure~\ref{fig:cm} presents the confusion matrix summed across all 67 LOSO folds.
-Of 1,340 PA2 trials, 875 were correctly classified (65.3\%) and 461 were misclassified
+Of 1,340 PA2 trials, 875 were correctly classified (65.3\%) and 465 were misclassified
 as PA3. Of 1,340 PA3 trials, 872 were correctly classified (65.1\%) and 468 were
 misclassified as PA2. The near-symmetrical misclassification pattern indicates no
 systematic bias toward either pain level.
@@ -954,8 +956,8 @@ systematic bias toward either pain level.
   colormap={myblue}{color=(white) color=(blue!60)},
   colorbar,
   colorbar style={
-    ytick={468, 875},
-    yticklabels={468, 875},
+    ytick={465, 875},
+    yticklabels={465, 875},
     ylabel={Count},
   },
   axis equal image,
@@ -965,7 +967,7 @@ systematic bias toward either pain level.
   point meta min=400, point meta max=900,
 ]
 \addplot[matrix plot, point meta=explicit] coordinates {
-  (0,1) [875]   (1,1) [461]
+  (0,1) [875]   (1,1) [465]
   (0,0) [468]   (1,0) [872]
 };
 \end{axis}
@@ -1267,7 +1269,7 @@ across all 67 subjects.
   fill=teal!40, draw=teal!70,
 ]
 \addplot coordinates {
-  (25,1)(35,1)(45,5)(55,21)(65,16)(75,9)(85,4)(95,0)
+  (25,1)(35,4)(45,9)(55,16)(65,18)(75,13)(85,6)(95,0)
 };
 \end{axis}
 \end{tikzpicture}
@@ -1297,8 +1299,8 @@ Below chance & $<$50\%      & 7 (10.4\%) \\
 \end{tabular}
 \end{table}
 
-Notably, 16.4\% of subjects show performance below 55\%, indicating that the model
-essentially fails for these individuals. At the other extreme, 14.9\% achieve $\geq$85\%
+Notably, 20.9\% of subjects (14 of 67) show performance below 55\%, indicating that the model
+essentially fails for these individuals. At the other extreme, 9.0\% achieve $\geq$85\%
 accuracy, indicating that physiological signals are genuinely informative for a substantial
 minority of participants. This bimodal tendency is a consistent pattern across the affective
 biosignal literature (\cite{Gkikas2023}) and suggests the presence of distinct
@@ -1438,11 +1440,11 @@ The results provide cautious optimism about the feasibility of automated adjacen
 level classification. A 65.3\% accuracy represents a 15.3-point improvement over chance,
 which in a clinical monitoring context could meaningfully increase sensitivity of automated
 pain alerts for non-communicative patients relative to no monitoring at all. The per-subject
-analysis, showing that 35.8\% of subjects achieve $\geq$70\% accuracy, suggests that a
+analysis, showing that 38.8\% of subjects achieve $\geq$70\% accuracy, suggests that a
 personalized system with a brief calibration phase could achieve substantially higher
 performance for a meaningful proportion of patients.
 
-However, the 16.4\% of subjects for whom the model performs below 55\% represents a
+However, the 20.9\% of subjects for whom the model performs below 55\% represents a
 failure mode clinically unacceptable in a patient safety context. Responsible deployment
 would require substantially larger training cohorts, real-world validation in target
 clinical populations (ICU, dementia, neonatal), and integration with existing clinical
