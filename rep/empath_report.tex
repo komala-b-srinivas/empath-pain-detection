@@ -826,44 +826,26 @@ strict evaluation of subject-independent generalization.}
 Code Snippet~\ref{lst:loso} shows the core LOSO evaluation loop.
 
 \begin{lstlisting}[caption={Core LOSO evaluation loop for the stacked fusion model. Arrays \texttt{X\_bio} and \texttt{X\_lm} contain unnormalized features; \texttt{y} contains binary labels; \texttt{groups} contains subject IDs.}, label={lst:loso}]
-from sklearn.model_selection import LeaveOneGroupOut
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import accuracy_score
-import numpy as np
-
 logo = LeaveOneGroupOut()
 accs = []
+RF_PARAMS = dict(n_estimators=300, max_depth=4,
+                 min_samples_split=10, max_features='sqrt',
+                 random_state=42)
 
 for train_idx, test_idx in logo.split(X_bio, y, groups):
-    g_train = groups[train_idx]
-    # Person-specific normalization (Snippet 2)
-    Xb_tr = person_norm_train(X_bio[train_idx], g_train)
-    Xb_te = person_norm_test(X_bio[test_idx])
-    Xl_tr = person_norm_train(X_lm[train_idx], g_train)
-    Xl_te = person_norm_test(X_lm[test_idx])
-    y_tr, y_te = y[train_idx], y[test_idx]
-
-    # Train base models
-    rf_bio = RandomForestClassifier(
-        n_estimators=300, max_depth=4,
-        min_samples_split=10, max_features='sqrt',
-        random_state=42).fit(Xb_tr, y_tr)
-    rf_lm = RandomForestClassifier(
-        n_estimators=300, max_depth=4,
-        min_samples_split=10, max_features='sqrt',
-        random_state=42).fit(Xl_tr, y_tr)
-
-    # Stacking: concatenate probability outputs
-    X_meta_tr = np.hstack([
-        rf_bio.predict_proba(Xb_tr),
-        rf_lm.predict_proba(Xl_tr)])
-    X_meta_te = np.hstack([
-        rf_bio.predict_proba(Xb_te),
-        rf_lm.predict_proba(Xl_te)])
-
-    meta = LogisticRegression(max_iter=1000)
-    meta.fit(X_meta_tr, y_tr)
+    g_tr = groups[train_idx]
+    # Person-specific z-score normalization (per Snippet 2)
+    Xb_tr, Xb_te = person_norm(X_bio, train_idx, test_idx, g_tr)
+    Xl_tr, Xl_te = person_norm(X_lm,  train_idx, test_idx, g_tr)
+    y_tr, y_te   = y[train_idx], y[test_idx]
+    # Train base learners, stack probabilities, fit meta-learner
+    rf_bio = RandomForestClassifier(**RF_PARAMS).fit(Xb_tr, y_tr)
+    rf_lm  = RandomForestClassifier(**RF_PARAMS).fit(Xl_tr, y_tr)
+    X_meta_tr = np.hstack([rf_bio.predict_proba(Xb_tr),
+                            rf_lm.predict_proba(Xl_tr)])
+    X_meta_te = np.hstack([rf_bio.predict_proba(Xb_te),
+                            rf_lm.predict_proba(Xl_te)])
+    meta = LogisticRegression(max_iter=1000).fit(X_meta_tr, y_tr)
     accs.append(accuracy_score(y_te, meta.predict(X_meta_te)))
 
 print(f"LOSO: {np.mean(accs)*100:.1f}% +/- {np.std(accs)*100:.1f}%")
@@ -1071,8 +1053,8 @@ for the biosignal and landmark base models respectively.
 \begin{tikzpicture}
 \begin{axis}[
   xbar,
-  width=14cm, height=7.5cm,
-  bar width=9pt,
+  width=14cm, height=6.0cm,
+  bar width=8pt,
   xlabel={Mean $|\text{SHAP}|$},
   ylabel={Feature},
   ytick={1,2,3,4,5,6,7,8,9,10,11,12,13,14,15},
@@ -1133,8 +1115,8 @@ discrimination.}
 \begin{tikzpicture}
 \begin{axis}[
   xbar,
-  width=14cm, height=8.5cm,
-  bar width=9pt,
+  width=14cm, height=7.0cm,
+  bar width=8pt,
   xlabel={Mean $|\text{SHAP}|$},
   ylabel={Feature},
   ytick={1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16},
