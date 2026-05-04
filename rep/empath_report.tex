@@ -116,6 +116,7 @@
   framexleftmargin=10pt,
 }
 \lstset{style=pythonstyle}
+\renewcommand{\lstlistingname}{Code Snippet}  % match in-text "Code Snippet N" references
 
 % ─── Math ───────────────────────────────────────────────
 \usepackage{amsmath}
@@ -425,7 +426,7 @@ Biosignal sample rate & 512~Hz & GSR, ECG, EMG \\
 
 Figure~\ref{fig:pipeline} illustrates the end-to-end data pipeline.
 
-\begin{figure*}[t]
+\begin{figure*}[tbp]
 \centering
 \begin{tikzpicture}[
   node distance=0.5cm and 1.4cm,
@@ -507,7 +508,7 @@ Code Snippet~\ref{lst:gsr_slope} shows the implementation of two key features:
 \texttt{gsr\_slope} (linear rate of change of skin conductance) and
 \texttt{gsr\_shannon} (Shannon entropy of the conductance distribution).
 
-\begin{lstlisting}[float=t, caption={GSR slope and Shannon entropy extraction from a single trial window. \texttt{gsr\_vals} is a 1-D NumPy array of skin conductance values (microsiemens) over 5.5 seconds.}, label={lst:gsr_slope}]
+\begin{lstlisting}[caption={GSR slope and Shannon entropy extraction from a single trial window. \texttt{gsr\_vals} is a 1-D NumPy array of skin conductance values (microsiemens) over 5.5 seconds.}, label={lst:gsr_slope}]
 import numpy as np
 from scipy.stats import entropy
 
@@ -541,7 +542,7 @@ information between each trial's GSR signal and the subject's own resting-state 
 recording. A cross-modal interaction feature (\texttt{gsr\_x\_ecg}) captures
 element-wise co-activation between GSR and ECG channels.
 
-\begin{table*}[t]
+\begin{table*}[tbp]
 \centering
 \caption{Complete Biosignal Feature Set (35 Features). Features are listed in
 CSV column order as they appear in \texttt{Results/biosignals\_hrv/all\_67\_hrv.csv}.
@@ -664,7 +665,7 @@ Our framework comprises:
 
 Figure~\ref{fig:architecture} shows the stacked architecture.
 
-\begin{figure*}[t]
+\begin{figure*}[tbp]
 \centering
 \begin{tikzpicture}[
   box/.style={rectangle, rounded corners=3pt, draw=black!50, thick,
@@ -724,7 +725,7 @@ statistics are computed independently before pooling the normalized training set
 test folds (single held-out subject), test statistics are computed from the subject's own
 unlabeled feature values. Code Snippet~\ref{lst:norm} shows the implementation.
 
-\begin{lstlisting}[float=t, caption={Person-specific $z$-score normalization for train and test folds. \texttt{X} is an (N, D) feature matrix; \texttt{g} is a length-N subject ID array.}, label={lst:norm}]
+\begin{lstlisting}[caption={Person-specific $z$-score normalization for train and test folds. \texttt{X} is an (N, D) feature matrix; \texttt{g} is a length-N subject ID array.}, label={lst:norm}]
 import numpy as np
 
 def person_norm_train(X, g):
@@ -826,7 +827,7 @@ strict evaluation of subject-independent generalization.}
 
 Code Snippet~\ref{lst:loso} shows the core LOSO evaluation loop.
 
-\begin{lstlisting}[float=t, caption={Core LOSO evaluation loop for the stacked fusion model. Arrays \texttt{X\_bio} and \texttt{X\_lm} contain unnormalized features; \texttt{y} contains binary labels; \texttt{groups} contains subject IDs.}, label={lst:loso}]
+\begin{lstlisting}[caption={Core LOSO evaluation loop for the stacked fusion model. Arrays \texttt{X\_bio} and \texttt{X\_lm} contain unnormalized features; \texttt{y} contains binary labels; \texttt{groups} contains subject IDs.}, label={lst:loso}]
 logo = LeaveOneGroupOut()
 accs = []
 RF_PARAMS = dict(n_estimators=300, max_depth=4,
@@ -875,7 +876,7 @@ script in \texttt{SRC/utils/run\_shap.slurm} (16~GB memory, 8 CPU cores, approxi
 12 minutes wall time).
 Code Snippet~\ref{lst:shap} shows the computation.
 
-\begin{lstlisting}[float=t, caption={SHAP TreeExplainer applied to the biosignal Random Forest. The same procedure applies to the landmark RF.}, label={lst:shap}]
+\begin{lstlisting}[caption={SHAP TreeExplainer applied to the biosignal Random Forest. The same procedure applies to the landmark RF.}, label={lst:shap}]
 import shap
 
 # Re-fit on all data (not for eval -- only interpretability)
@@ -911,24 +912,24 @@ The EmPath stacked fusion model achieved a mean LOSO accuracy of \textbf{65.3\%}
 summarizes performance for the proposed system and primary baselines. The fusion model
 significantly exceeds chance (50.0\%), $t(66) = 10.90$, $p < .001$.
 
-\begin{table*}[t]
+\begin{table}[htbp]
 \centering
 \caption{Primary Performance Metrics: EmPath Stacked Fusion vs.\ Baselines}
 \label{tab:perf}
 \small
 \begin{tabular}{lcccc}
 \toprule
-\textbf{Model} & \textbf{Accuracy (\%)} & \textbf{SD (\%)} & \textbf{AUC} & \textbf{F\textsubscript{1}} \\
+\textbf{Model} & \textbf{Acc.\ (\%)} & \textbf{SD (\%)} & \textbf{AUC} & \textbf{F\textsubscript{1}} \\
 \midrule
-Chance baseline         & 50.0 & ---  & 0.500 & 0.500 \\
-Biosignal RF (no norm)  & 59.9 & 13.2 & ---   & ---   \\
-Biosignal RF            & 63.1 & 11.6 & 0.668 & 0.631 \\
-Landmark RF             & 61.4 & 13.1 & 0.641 & 0.614 \\
-Early fusion (concat)   & 64.6 & 13.8 & 0.701 & 0.646 \\
-\textbf{EmPath Stacked} & \textbf{65.3} & \textbf{14.1} & \textbf{0.719} & \textbf{0.653} \\
+Chance baseline        & 50.0 & ---  & 0.500 & 0.500 \\
+Biosig RF (no norm)    & 59.9 & 13.2 & ---   & ---   \\
+Biosignal RF           & 63.1 & 11.6 & 0.668 & 0.631 \\
+Landmark RF            & 61.4 & 13.1 & 0.641 & 0.614 \\
+Early fusion (concat)  & 64.6 & 13.8 & 0.701 & 0.646 \\
+\textbf{EmPath Stacked}& \textbf{65.3} & \textbf{14.1} & \textbf{0.719} & \textbf{0.653} \\
 \bottomrule
 \end{tabular}
-\end{table*}
+\end{table}
 
 The fusion model surpasses the biosignal-only baseline by 2.2 percentage points and the
 landmark-only baseline by 3.9 percentage points, and outperforms early (concatenation)
@@ -981,7 +982,7 @@ no systematic bias toward either pain class.}
 Table~\ref{tab:ablation} presents the full ablation across 26 model configurations,
 organized chronologically by development phase. All experiments use LOSO-67 evaluation.
 
-\begin{table*}[t]
+\begin{table}[htbp]
 \centering
 \caption{Ablation Study: 26 Model Variants Under LOSO-67 Evaluation}
 \label{tab:ablation}
@@ -1030,7 +1031,7 @@ Velocity RF only          & 60.0 & 11.9 \\
 Velocity + biosig stacked & 64.0 & 12.7 \\
 \bottomrule
 \end{tabular}
-\end{table*}
+\end{table}
 
 Several patterns are evident. First, random-split models dramatically overestimate
 cross-subject performance. Second, foundation models fine-tuned on BioVid underperform
@@ -1049,7 +1050,7 @@ for the biosignal and landmark base models respectively.
 % ─── BIOSIGNAL SHAP CHART ──────────────────────────────
 % Fixed: using numeric y coords + explicit yticklabels
 % avoids pgfplots symbolic-coord collapse bug
-\begin{figure*}[t]
+\begin{figure*}[tbp]
 \centering
 \begin{tikzpicture}
 \begin{axis}[
@@ -1111,7 +1112,7 @@ discrimination.}
 \end{figure*}
 
 % ─── LANDMARK SHAP CHART ───────────────────────────────
-\begin{figure*}[t]
+\begin{figure*}[tbp]
 \centering
 \begin{tikzpicture}
 \begin{axis}[
@@ -1201,7 +1202,7 @@ Section~\ref{sec:limitations}.
 Table~\ref{tab:shap} presents numerical SHAP values for the top 10 features from each
 modality.
 
-\begin{table*}[t]
+\begin{table*}[tbp]
 \centering
 \caption{Top 10 Features by Mean Absolute SHAP Value for Each Base Model}
 \label{tab:shap}
