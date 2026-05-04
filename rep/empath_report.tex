@@ -127,6 +127,20 @@
 \captionsetup[table]{position=top}
 \usepackage{mdframed}
 
+% ─── Float control ──────────────────────────────────────
+% Prevent floats accumulating past section boundaries and
+% appearing after the bibliography in two-column layout.
+\usepackage{placeins}   % provides \FloatBarrier
+% Allow more floats per page and lower the threshold
+% at which LaTeX outputs a float-only page.
+\setcounter{topnumber}{4}
+\setcounter{bottomnumber}{2}
+\setcounter{totalnumber}{6}
+\renewcommand{\topfraction}{0.85}
+\renewcommand{\bottomfraction}{0.5}
+\renewcommand{\textfraction}{0.10}
+\renewcommand{\floatpagefraction}{0.80}
+
 % ─── Hyperlinks ─────────────────────────────────────────
 \usepackage[colorlinks=true, linkcolor=journalblue,
             citecolor=journalteal, urlcolor=journalblue]{hyperref}
@@ -901,6 +915,7 @@ df_shap = pd.DataFrame({
 }).sort_values("mean_shap", ascending=False)
 \end{lstlisting}
 
+\FloatBarrier
 % =========================================================
 \section{Results}
 \label{sec:results}
@@ -1306,6 +1321,7 @@ minority of participants. This bimodal tendency is a consistent pattern across t
 biosignal literature (\cite{Gkikas2023}) and suggests the presence of distinct
 physiological responder subtypes.
 
+\FloatBarrier
 % =========================================================
 \section{Discussion}
 \label{sec:discussion}
@@ -1455,6 +1471,7 @@ The per-subject accuracy distribution further suggests that a brief calibration 
 improve performance for individual patients by providing subject-specific normalization
 statistics, consistent with a personalized continuous monitoring use case.
 
+\FloatBarrier
 % =========================================================
 \section{Limitations and Future Directions}
 \label{sec:limitations}
@@ -1530,6 +1547,7 @@ Extending to a four-class problem (PA1--PA4) or an ordinal regression framework 
 provide a more complete characterization of the system's sensitivity across the full pain
 intensity range, though at the cost of substantially increased task difficulty.
 
+\FloatBarrier
 % =========================================================
 \section{Conclusion}
 \label{sec:conclusion}
@@ -1579,6 +1597,12 @@ and SHAP analysis is available from the author upon request.
 
 K.B.S. conceived and designed the study, performed all data analysis and coding, and wrote
 the manuscript. Dr.~Purna Prasad provided supervision and feedback throughout the project.
+
+% Force all deferred floats to be placed before the
+% bibliography. Without this, table* / figure* floats
+% can appear after \printbibliography in twocolumn mode.
+\FloatBarrier
+\clearpage
 
 % =========================================================
 \printbibliography[title={References}]
