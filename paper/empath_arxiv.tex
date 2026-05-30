@@ -1,17 +1,20 @@
 %%
 %% EmPath: Multimodal Pain Intensity Detection Using Biosignals and Facial Landmarks
-%% ACM SAC 2027 — Bioinformatics, Computational Biology, and Biomedical Informatics (BCB) Track
+%% arXiv preprint — submitted to ACM SAC 2027 (BCB Track)
 %%
 %% Authors: Komala Belur Srinivas, Purna Prasad
 %%          Department of Computer Science, Hofstra University
 %%
 %% SUBMISSION NOTES:
-%%   - For double-blind review: \documentclass[sigconf,anonymous]{acmart}
+%%   - arXiv version: copyright suppressed, preprint note added
+%%   - For ACM double-blind review: \documentclass[sigconf,anonymous]{acmart}
+%%     and remove \setcopyright{none} / \acmDOI / \acmISBN lines
 %%   - Verify CCS concepts at https://dl.acm.org/ccs
 %%   - Page limit: 8 pages + references (SAC BCB track)
 %%
 
 \documentclass[sigconf]{acmart}
+\setcopyright{none}           %% arXiv: suppress ACM copyright box
 
 %% ---- Packages ---------------------------------------------------------------
 \usepackage{booktabs}       % professional tables
@@ -21,6 +24,7 @@
 \usepackage{graphicx}       % figures
 \usepackage{xspace}         % smart spacing
 \usepackage{url}            % \url{} for code links
+\usepackage{tcolorbox}      % preprint notice box (arXiv only)
 
 %% ---- ACM Metadata -----------------------------------------------------------
 \acmConference[SAC '27]{The 42nd ACM/SIGAPP Symposium on Applied Computing}
@@ -123,6 +127,13 @@ Code and pre-computed features are available at
 \end{abstract}
 
 \maketitle
+
+%% arXiv preprint notice — remove for camera-ready
+\begin{tcolorbox}[colback=gray!10,colframe=gray!50,boxrule=0.4pt,left=4pt,right=4pt,top=2pt,bottom=2pt]
+  \small\textit{Preprint. Submitted to the 42nd ACM/SIGAPP Symposium on Applied Computing
+  (SAC 2027), BCB Track. This version has not undergone peer review.}
+\end{tcolorbox}
+\vspace{4pt}
 
 %% ============================================================
 \section{Introduction}
