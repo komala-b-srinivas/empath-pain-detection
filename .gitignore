@@ -4,16 +4,34 @@
 
 # Raw BioVid dataset — 27.8 GB, store separately
 Data/Raw/
+Data/splits/
 
 # Extracted face images — 467 MB, regenerate with extract_faces scripts
 Results/faces_all67/
 
 # GNN raw landmark coordinates — 199 MB, regenerate with extract_landmarks_raw_coords.py
 Results/landmarks_gnn/raw_coords.npz
+Results/landmarks_gnn/
 
 # Intermediate biosignal outputs — not required for app or evaluation
 Results/biosignals_all67/
 Results/biosignals_all87/
+
+# Saved models & binary checkpoints
+Models/*.pkl
+Models/*.pt
+Models/*.pth
+Models/*.joblib
+*.pkl
+*.pt
+*.pth
+*.joblib
+*.h5
+*.hdf5
+
+# NumPy binary arrays
+*.npz
+*.npy
 
 # Archive files
 *.zip
@@ -25,23 +43,29 @@ Results/biosignals_all87/
 
 # Python cache
 __pycache__/
+*.py[cod]
 *.pyc
 *.pyo
 *.pyd
 *.egg-info/
 dist/
 build/
+.pytest_cache/
+.mypy_cache/
 
 # macOS system files
 .DS_Store
 .AppleDouble
 .LSOverride
+.Spotlight-V100
+.Trashes
 
 # IDE config
 .idea/
 .vscode/
 *.swp
 *.swo
+*~
 
 # Jupyter checkpoints
 .ipynb_checkpoints/
@@ -50,6 +74,39 @@ build/
 .env
 venv/
 env/
+.venv/
+
+# Experiment tracking
+logs/
+runs/
+wandb/
+mlruns/
+lightning_logs/
+
+# LaTeX build artifacts
+paper/*.aux
+paper/*.bbl
+paper/*.bcf
+paper/*.blg
+paper/*.fdb_latexmk
+paper/*.fls
+paper/*.log
+paper/*.out
+paper/*.run.xml
+paper/*.synctex.gz
+paper/*.toc
+paper/*.pdf
+# but keep figures
+!paper/figures/
+
+# Node / Streamlit Cloud
+node_modules/
+.streamlit/cache/
 
 # Internal AI context file — not for public repo
 CLAUDE.md
+package.json
+package-lock.json
+build_ppt.js
+add_code_slides.py
+t-SNE.png

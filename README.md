@@ -5,8 +5,11 @@ Subject-independent pain classification from biosignals and facial landmarks usi
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-Streamlit-red?logo=streamlit)](https://komala-b-srinivas-empath-app-oxt9of.streamlit.app/)
 [![Python](https://img.shields.io/badge/Python-3.10-blue?logo=python)](https://python.org)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green)](LICENSE)
+[![Paper](https://img.shields.io/badge/Paper-ACM%20SAC%202027-blue)](paper/empath_acm_sac.tex)
 
 **Live demo:** https://komala-b-srinivas-empath-app-oxt9of.streamlit.app/
+
+**Authors:** Komala Belur Srinivas · Dr. Purna Prasad — Hofstra University (2026)
 
 ---
 
@@ -175,7 +178,7 @@ EmPath_v2/
 
 ```bash
 # Clone the repo
-git clone https://github.com/komalabelursrinivas/EmPath_v2.git
+git clone https://github.com/komalabelursrinivas/empath-pain-detection.git
 cd EmPath_v2
 
 # Create environment
@@ -254,16 +257,24 @@ streamlit run app.py
 
 ---
 
+## Publication
+
+This work is being prepared for submission to **ACM SAC 2027** (Health Informatics / BCB track).
+The LaTeX source is at [`paper/empath_acm_sac.tex`](paper/empath_acm_sac.tex).
+
 ## Citation
 
 If you use this work, please cite:
 
-```
-@article{beluursrinivas2026empath,
-  author = {Belur Srinivas, Komala},
-  title  = {EmPath: Multimodal Pain Intensity Detection Using Biosignals and Facial Landmarks},
-  year   = {2026},
-  note   = {Capstone Project, Hofstra University}
+```bibtex
+@inproceedings{beluursrinivas2027empath,
+  author    = {Belur Srinivas, Komala and Prasad, Purna},
+  title     = {{EmPath}: Multimodal Pain Intensity Detection via Stacked Generalization
+               of Biosignals and Facial Landmarks},
+  booktitle = {Proceedings of the 42nd ACM/SIGAPP Symposium on Applied Computing (SAC)},
+  year      = {2027},
+  publisher = {ACM},
+  note      = {Under review}
 }
 ```
 

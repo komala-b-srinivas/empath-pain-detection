@@ -1,0 +1,63 @@
+Loading data...
+Matched: 2680 samples, 67 subjects
+
+============================================================
+PHASE 1 — HP Search (GroupKFold-10 on all 67 subjects)
+============================================================
+
+Tuning RF_bio  (n_iter=30, cv=GroupKFold(10)) ...
+Fitting 10 folds for each of 30 candidates, totalling 300 fits
+  Best RF_bio params : {'max_depth': 3, 'max_features': 'sqrt', 'min_samples_leaf': 4, 'min_samples_split': 10, 'n_estimators': 330}
+  Best CV accuracy   : 63.0%
+
+Tuning RF_lm   (n_iter=30, cv=GroupKFold(10)) ...
+Fitting 10 folds for each of 30 candidates, totalling 300 fits
+  Best RF_lm  params : {'max_depth': None, 'max_features': 'log2', 'min_samples_leaf': 5, 'min_samples_split': 20, 'n_estimators': 316}
+  Best CV accuracy   : 62.7%
+
+Tuning LogReg C on meta-features (GroupKFold(10)) ...
+Fitting 10 folds for each of 6 candidates, totalling 60 fits
+  Best LogReg C      : 5.0
+  Best CV accuracy   : 92.3%
+
+Phase 1 done in 1.6 min
+
+============================================================
+PHASE 2 — Full LOSO (67 folds) with tuned HPs
+============================================================
+  Fold  1/67 | tuned=82.5% | baseline=87.5% | elapsed=0.0m
+  Fold 10/67 | tuned=65.3% | baseline=67.0% | elapsed=0.2m
+  Fold 20/67 | tuned=66.5% | baseline=68.4% | elapsed=0.5m
+  Fold 30/67 | tuned=67.1% | baseline=70.3% | elapsed=0.7m
+  Fold 40/67 | tuned=67.0% | baseline=69.5% | elapsed=1.0m
+  Fold 50/67 | tuned=65.4% | baseline=67.8% | elapsed=1.2m
+  Fold 60/67 | tuned=63.8% | baseline=65.7% | elapsed=1.5m
+
+==============================================================
+  RESULTS
+==============================================================
+  Baseline (fixed HPs)  : 65.3% ± 14.1%
+  Tuned (HP search)     : 63.4%    ± 13.7%
+  Delta                 : -1.9 pp
+==============================================================
+
+Classification report (tuned):
+              precision    recall  f1-score   support
+
+         PA2       0.63      0.65      0.64      1340
+         PA3       0.64      0.61      0.63      1340
+
+    accuracy                           0.63      2680
+   macro avg       0.63      0.63      0.63      2680
+weighted avg       0.63      0.63      0.63      2680
+
+
+Best HPs found:
+  RF_bio : {'max_depth': 3, 'max_features': 'sqrt', 'min_samples_leaf': 4, 'min_samples_split': 10, 'n_estimators': 330}
+  RF_lm  : {'max_depth': None, 'max_features': 'log2', 'min_samples_leaf': 5, 'min_samples_split': 20, 'n_estimators': 316}
+  LogReg C: 5.0
+
+Phase 1 (search): 1.6 min
+Phase 2 (LOSO)  : 1.6 min
+
+Results saved → /Users/komalabelursrinivas/Desktop/Capstone/EmPath_v2/Results/hp_tuning/tuning_results.json
