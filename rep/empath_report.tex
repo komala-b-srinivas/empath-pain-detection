@@ -428,59 +428,7 @@ Figure~\ref{fig:pipeline} illustrates the end-to-end data pipeline.
 
 \begin{figure*}[tbp]
 \centering
-\begin{tikzpicture}[
-  node distance=0.5cm and 1.4cm,
-  block/.style={
-    rectangle, rounded corners=4pt,
-    minimum width=3.0cm, minimum height=0.6cm,
-    text centered, font=\small,
-    draw=black!50, thick
-  },
-  rawblock/.style={block, fill=gray!12},
-  vidblock/.style={block, fill=blue!12},
-  bioblock/.style={block, fill=orange!14},
-  featblock/.style={block, fill=green!12},
-  modelblock/.style={block, fill=purple!14},
-  outblock/.style={block, fill=red!12},
-  arrow/.style={-Stealth, thick, black!60},
-  groupbox/.style={draw=black!30, rounded corners=5pt, dashed, inner sep=6pt}
-]
-\node[rawblock] (biovid) {BioVid Database};
-\node[vidblock,  below=0.7cm of biovid, xshift=-2.3cm] (video)  {MP4 Video Files};
-\node[bioblock,  below=0.7cm of biovid, xshift= 2.3cm] (biosig) {Biosignal TSVs};
-\node[vidblock,  below=0.7cm of video]  (faces)     {Face Extraction};
-\node[bioblock,  below=0.7cm of biosig] (sigwin)    {Signal Windowing};
-\node[vidblock,  below=0.7cm of faces]  (mediapipe) {MediaPipe FaceMesh};
-\node[bioblock,  below=0.7cm of sigwin] (nk2)       {NeuroKit2 + Stats};
-\node[featblock, below=0.7cm of mediapipe] (lmfeat) {22 Landmark Feats};
-\node[featblock, below=0.7cm of nk2]       (biofeat) {35 Biosignal Feats};
-\node[featblock, below=1.0cm of lmfeat, xshift=2.3cm] (norm) {Person-Specific $z$-Score};
-\node[modelblock, below=0.7cm of norm, xshift=-2.3cm] (rflm)  {RF Landmark};
-\node[modelblock, below=0.7cm of norm, xshift= 2.3cm] (rfbio) {RF Biosignal};
-\node[modelblock, below=0.7cm of rflm, xshift=2.3cm] (meta) {LogReg Meta-Learner};
-\node[outblock, below=0.7cm of meta] (out) {PA2 / PA3 Prediction};
-\draw[arrow] (biovid) -- (video);
-\draw[arrow] (biovid) -- (biosig);
-\draw[arrow] (video)   -- (faces);
-\draw[arrow] (biosig)  -- (sigwin);
-\draw[arrow] (faces)   -- (mediapipe);
-\draw[arrow] (sigwin)  -- (nk2);
-\draw[arrow] (mediapipe) -- (lmfeat);
-\draw[arrow] (nk2)       -- (biofeat);
-\draw[arrow] (lmfeat)  -- (norm);
-\draw[arrow] (biofeat) -- (norm);
-\draw[arrow] (norm) -- (rflm);
-\draw[arrow] (norm) -- (rfbio);
-\draw[arrow] (rflm)  -- (meta);
-\draw[arrow] (rfbio) -- (meta);
-\draw[arrow] (meta)  -- (out);
-\begin{scope}[on background layer]
-  \node[groupbox, fit=(video)(faces)(mediapipe)(lmfeat),
-        label={[font=\tiny,text=blue!60]left:Visual}] {};
-  \node[groupbox, fit=(biosig)(sigwin)(nk2)(biofeat),
-        label={[font=\tiny,text=orange!70!black]right:Physiological}] {};
-\end{scope}
-\end{tikzpicture}
+\includegraphics[width=0.85\textwidth]{figures/system_architecture.png}
 \caption{End-to-end data pipeline from BioVid raw files to pain intensity prediction.
 The visual branch (left, blue) extracts geometric facial landmark features;
 the physiological branch (right, orange) extracts time-series statistics from biosignals.
@@ -945,32 +893,7 @@ systematic bias toward either pain level.
 
 \begin{figure}[ht]
 \centering
-\begin{tikzpicture}
-\begin{axis}[
-  xticklabels={PA2 (Pred), PA3 (Pred)},
-  yticklabels={PA2 (True), PA3 (True)},
-  xtick={0,1}, ytick={0,1},
-  xmin=-0.5, xmax=1.5,
-  ymin=-0.5, ymax=1.5,
-  colormap={myblue}{color=(white) color=(blue!60)},
-  colorbar,
-  colorbar style={
-    ytick={465, 875},
-    yticklabels={465, 875},
-    ylabel={Count},
-  },
-  axis equal image,
-  width=0.8\columnwidth, height=0.8\columnwidth,
-  nodes near coords={\pgfmathprintnumber[precision=0]{\pgfplotspointmeta}},
-  nodes near coords style={font=\normalsize\bfseries, text=black},
-  point meta min=400, point meta max=900,
-]
-\addplot[matrix plot, point meta=explicit] coordinates {
-  (0,1) [875]   (1,1) [465]
-  (0,0) [468]   (1,0) [872]
-};
-\end{axis}
-\end{tikzpicture}
+\includegraphics[width=0.85\columnwidth]{figures/confusion_matrix.png}
 \caption{Confusion matrix aggregated across all 67 LOSO folds (2,680 total test samples).
 Diagonal entries represent correct classifications. The near-symmetrical pattern indicates
 no systematic bias toward either pain class.}
@@ -1047,62 +970,9 @@ learned graph structure at this dataset scale.
 Figures~\ref{fig:shap_bio} and~\ref{fig:shap_lm} present SHAP feature importance rankings
 for the biosignal and landmark base models respectively.
 
-% ─── BIOSIGNAL SHAP CHART ──────────────────────────────
-% Fixed: using numeric y coords + explicit yticklabels
-% avoids pgfplots symbolic-coord collapse bug
 \begin{figure*}[tbp]
 \centering
-\begin{tikzpicture}
-\begin{axis}[
-  xbar,
-  width=14cm, height=6.0cm,
-  bar width=8pt,
-  xlabel={Mean $|\text{SHAP}|$},
-  ylabel={Feature},
-  ytick={1,2,3,4,5,6,7,8,9,10,11,12,13,14,15},
-  yticklabels={
-    {ecg\_sim\_mi},
-    {ecg\_sim\_corr},
-    {hrv\_rmssd},
-    {hrv\_pnn50},
-    {hrv\_sdnn},
-    {emg\_asymmetry},
-    {hrv\_meannn},
-    {gsr\_sim\_mi},
-    {emg\_trap\_std},
-    {gsr\_sim\_corr},
-    {gsr\_shannon},
-    {ecg\_shannon},
-    {ecg\_max},
-    {gsr\_std},
-    {gsr\_slope}
-  },
-  yticklabel style={font=\small},
-  xmin=0, xmax=0.045,
-  ymin=0, ymax=16,
-  nodes near coords={\pgfmathprintnumber[fixed,precision=4]{\pgfplotspointmeta}},
-  nodes near coords style={font=\tiny, anchor=west, xshift=2pt},
-  title={\small Biosignal SHAP Feature Importance (Top 15)},
-]
-\addplot[fill=orange!60, draw=orange!80] coordinates {
-  (0.0018, 1)
-  (0.0018, 2)
-  (0.0022, 3)
-  (0.0018, 4)
-  (0.0047, 5)
-  (0.0049, 6)
-  (0.0056, 7)
-  (0.0057, 8)
-  (0.0085, 9)
-  (0.0144, 10)
-  (0.0145, 11)
-  (0.0145, 12)
-  (0.0201, 13)
-  (0.0276, 14)
-  (0.0372, 15)
-};
-\end{axis}
-\end{tikzpicture}
+\includegraphics[width=0.82\textwidth]{figures/shap_biosignal_bar.png}
 \caption{SHAP feature importance for the Random Forest biosignal base model
 (TreeExplainer, full-data fit). \texttt{gsr\_slope} is the dominant feature, reflecting
 the rate of change in skin conductance during the stimulus window. The top four features
@@ -1111,62 +981,9 @@ discrimination.}
 \label{fig:shap_bio}
 \end{figure*}
 
-% ─── LANDMARK SHAP CHART ───────────────────────────────
 \begin{figure*}[tbp]
 \centering
-\begin{tikzpicture}
-\begin{axis}[
-  xbar,
-  width=14cm, height=7.0cm,
-  bar width=8pt,
-  xlabel={Mean $|\text{SHAP}|$},
-  ylabel={Feature},
-  ytick={1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16},
-  yticklabels={
-    {nose\_width\_mean},
-    {mouth\_asp\_ratio\_mean},
-    {left\_eye\_open\_std},
-    {brow\_furrow\_mean},
-    {avg\_eye\_open\_std},
-    {mouth\_height\_mean},
-    {right\_eye\_open\_std},
-    {mouth\_width\_mean},
-    {right\_eye\_open\_mean},
-    {left\_eye\_open\_mean},
-    {avg\_eye\_open\_mean},
-    {brow\_furrow\_std},
-    {left\_brow\_eye\_dist\_std},
-    {nose\_width\_std},
-    {mouth\_width\_std},
-    {mouth\_height\_std}
-  },
-  yticklabel style={font=\small},
-  xmin=0, xmax=0.035,
-  ymin=0, ymax=17,
-  nodes near coords={\pgfmathprintnumber[fixed,precision=4]{\pgfplotspointmeta}},
-  nodes near coords style={font=\tiny, anchor=west, xshift=2pt},
-  title={\small Landmark SHAP Feature Importance (Top 16)},
-]
-\addplot[fill=blue!50, draw=blue!70] coordinates {
-  (0.0008, 1)
-  (0.0012, 2)
-  (0.0012, 3)
-  (0.0012, 4)
-  (0.0013, 5)
-  (0.0018, 6)
-  (0.0021, 7)
-  (0.0028, 8)
-  (0.0081, 9)
-  (0.0082, 10)
-  (0.0091, 11)
-  (0.0072, 12)
-  (0.0134, 13)
-  (0.0246, 14)
-  (0.0254, 15)
-  (0.0289, 16)
-};
-\end{axis}
-\end{tikzpicture}
+\includegraphics[width=0.82\textwidth]{figures/shap_landmark_bar.png}
 \caption{SHAP feature importance for the Random Forest landmark base model.
 \texttt{mouth\_height\_std} (temporal variability in lip separation) is the dominant
 feature, followed by \texttt{mouth\_width\_std} and \texttt{nose\_width\_std}. The
@@ -1253,25 +1070,7 @@ across all 67 subjects.
 
 \begin{figure}[ht]
 \centering
-\begin{tikzpicture}
-\begin{axis}[
-  ybar interval,
-  xlabel={Per-Subject Accuracy (\%)},
-  ylabel={Number of Subjects},
-  xmin=25, xmax=100,
-  ymin=0,
-  xtick={30,40,50,60,70,80,90,100},
-  xticklabel style={font=\small},
-  bar width=6pt,
-  title={\small Per-Subject Accuracy Distribution ($N = 67$)},
-  width=\columnwidth, height=5cm,
-  fill=teal!40, draw=teal!70,
-]
-\addplot coordinates {
-  (25,1)(35,4)(45,9)(55,16)(65,18)(75,13)(85,6)(95,0)
-};
-\end{axis}
-\end{tikzpicture}
+\includegraphics[width=\columnwidth]{figures/per_subject_accuracy.png}
 \caption{Distribution of per-subject LOSO fold accuracy ($N = 67$). The distribution is
 roughly normal, centered near the population mean (65.3\%), with high variance
 (\textit{SD} = 14.1\%). Four subjects achieve $\geq$90\% accuracy; five subjects achieve
